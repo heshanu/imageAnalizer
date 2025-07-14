@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hugging Face + Gin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<style>
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+h2 {
+    color: #3498db;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+textarea, select, input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: 600;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+.result {
+    margin-top: 25px;
+    padding: 20px;
+    background: #e8f4fd;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+</style>
+<body>
+    <div class="container">
+        <h1>Hugging Face Integration</h1>
+        
+        <!-- Text Generation Form -->
+        <div class="section">
+            <h2>Text Generation</h2>
+            <form action="/generate" method="post">
+                <div class="form-group">
+                    <label for="prompt">Enter prompt:</label>
+                    <textarea name="prompt" required>{{.prompt}}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="model">Model:</label>
+                    <select name="model">
+                        <option value="gpt2">GPT-2</option>
+                        <option value="facebook/opt-1.3b">OPT-1.3B</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Generate Text</button>
+            </form>
+            
+            {{if .result}}
+            <div class="result">
+                <h3>Generated Text:</h3>
+                <p>{{.result}}</p>
+            </div>
+            {{end}}
+        </div>
+        
+        <!-- Image Classification Form -->
+        <div class="section">
+            <h2>Image Classification</h2>
+            <form action="/classify" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="image">Upload image:</label>
+                    <input type="file" name="image" accept="image/*" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="model">Model:</label>
+                    <select name="model">
+                        <option value="google/vit-base-patch16-224">ViT Base</option>
+                        <option value="microsoft/resnet-50">ResNet-50</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Classify Image</button>
+            </form>
+            
+            {{if .classResults}}
+            <div class="result">
+                <h3>Classification Results ({{.image}}):</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Label</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .classResults}}
+                        <tr>
+                            <td>{{.Label}}</td>
+                            <td>{{printf "%.2f" .Score}}%</td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</body>
+</html>
