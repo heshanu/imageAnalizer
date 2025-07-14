@@ -35,7 +35,7 @@ COPY --from=builder /app/static ./static
 
 # Set environment variables (override with docker run -e)
 ENV PORT=8080
-ENV HUGGING_FACE_API_KEY="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"
+ENV HUGGING_FACE_API_KEY=""
 
 # Expose port
 EXPOSE $PORT
